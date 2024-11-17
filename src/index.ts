@@ -1,3 +1,9 @@
-export function add(a: number, b: number): number {
-  return a + b;
-}
+/**
+ * Importing npm packages
+ */
+import 'reflect-metadata';
+
+/**
+ * exporting modules
+ */
+export * from './decorators';
