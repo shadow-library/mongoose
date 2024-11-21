@@ -1,7 +1,8 @@
 /**
  * Importing npm packages
  */
-import { MixedSchemaTypeOptions, SchemaTypeOptions } from 'mongoose';
+import { SchemaTypeOptions } from 'mongoose';
+import { Class } from 'type-fest';
 
 /**
  * Importing user defined packages
@@ -12,13 +13,15 @@ import { DESIGN_TYPE_METADATA_KEY, PROP_METADATA_KEY, SCHEMA_FIELDS_METADATA_KEY
  * Defining types
  */
 
-export type PropOptions<T = undefined, EnforcedDocType = any> = SchemaTypeOptions<T extends undefined ? any : T, EnforcedDocType> | MixedSchemaTypeOptions<EnforcedDocType>;
+export interface PropOptions<T = any> extends Omit<SchemaTypeOptions<any, any>, 'type'> {
+  type?: Class<T>;
+}
 
 /**
  * Declaring the constants
  */
 
-export function Prop(options: PropOptions = {}): PropertyDecorator {
+export function Prop<T>(options: PropOptions<T> = {}): PropertyDecorator {
   return (target, propertyKey) => {
     if (typeof propertyKey === 'symbol') throw new Error(`Cannot apply @Prop() to symbol ${propertyKey.toString()}`);
     if (!options.type) options.type = Reflect.getMetadata(DESIGN_TYPE_METADATA_KEY, target, propertyKey);
