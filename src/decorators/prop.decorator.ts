@@ -13,7 +13,7 @@ import { DESIGN_TYPE_METADATA_KEY, PROP_METADATA_KEY, SCHEMA_FIELDS_METADATA_KEY
  * Defining types
  */
 
-export interface PropOptions<T = any> extends Omit<SchemaTypeOptions<any, any>, 'type'> {
+export interface PropOptions<T = unknown> extends SchemaTypeOptions<Class<T>> {
   type?: Class<T>;
 }
 

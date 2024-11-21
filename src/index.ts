@@ -7,3 +7,4 @@ import 'reflect-metadata';
  * exporting modules
  */
 export * from './decorators';
+export * from './schema.factory';
