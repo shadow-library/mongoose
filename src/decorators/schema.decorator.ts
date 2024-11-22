@@ -17,5 +17,8 @@ import { SCHEMA_METADATA_KEY } from '@lib/constants';
  */
 
 export function Schema(options: SchemaOptions = {}): ClassDecorator {
-  return target => Reflect.defineMetadata(SCHEMA_METADATA_KEY, options, target);
+  return target => {
+    if (Object.keys(options).length === 0) return;
+    Reflect.defineMetadata(SCHEMA_METADATA_KEY, options, target);
+  };
 }

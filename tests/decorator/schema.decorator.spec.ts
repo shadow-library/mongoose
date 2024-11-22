@@ -27,4 +27,14 @@ describe('@Schema()', () => {
     const options = Reflect.getMetadata(SCHEMA_METADATA_KEY, Document);
     expect(options).toStrictEqual({ versionKey: false });
   });
+
+  it('should not set the schema options metadata if the options are empty', () => {
+    @Schema()
+    class EmptyDocument {
+      field: string;
+    }
+
+    const options = Reflect.getMetadata(SCHEMA_METADATA_KEY, EmptyDocument);
+    expect(options).toBeUndefined();
+  });
 });
