@@ -1,5 +1,5 @@
 {
-  "name": "@shadow-library/lib-name",
+  "name": "@shadow-library/mongoose",
   "type": "module",
   "version": "0.0.0",
   "description": "description",
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/shadow-library/lib-name.git"
+    "url": "git+ssh://git@github.com/shadow-library/mongoose.git"
   },
   "author": "Leander Paul <leanderpaul97@outlook.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shadow-library/lib-name/issues"
+    "url": "https://github.com/shadow-library/mongoose/issues"
   },
-  "homepage": "https://github.com/shadow-library/lib-name#readme",
+  "homepage": "https://github.com/shadow-library/mongoose#readme",
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
@@ -32,6 +32,7 @@
     "eslint-plugin-import": "^2.31.0",
     "globals": "^15.11.0",
     "husky": "^9.1.6",
+    "mongoose": "^8.9.5",
     "prettier": "^3.3.3",
     "reflect-metadata": "^0.2.2",
     "release-it": "^17.10.0",
@@ -41,6 +42,7 @@
     "typescript-eslint": "^8.11.0"
   },
   "peerDependencies": {
+    "mongoose": "^8.0.0",
     "reflect-metadata": "^0.2.2"
   }
 }
