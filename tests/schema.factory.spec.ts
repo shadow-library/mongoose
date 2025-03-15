@@ -41,6 +41,10 @@ describe('SchemaFactory', () => {
     subDocumentTwo: SubDocumentTwo;
   }
 
+  it('should not be able to instantiate the class', () => {
+    expect(() => new SchemaFactory()).toThrowError();
+  });
+
   it('should create a schema for the given class', () => {
     const schema = SchemaFactory.create(SubDocumentTwo);
     expect(schema).toBeInstanceOf(MongooseSchema);

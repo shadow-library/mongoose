@@ -20,6 +20,10 @@ const BUILT_IN_TYPES: (Class<unknown> | BigIntConstructor)[] = [Boolean, Number,
 
 /* eslint-disable-next-line @typescript-eslint/no-extraneous-class */
 export class SchemaFactory {
+  constructor() {
+    throw new Error(`The ${this.constructor.name} class cannot be instantiated.`);
+  }
+
   private static isPrimitiveType(type: Class<unknown>): boolean {
     return BUILT_IN_TYPES.includes(type);
   }
