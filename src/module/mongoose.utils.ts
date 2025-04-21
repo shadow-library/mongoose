@@ -5,7 +5,7 @@
 /**
  * Importing user defined packages
  */
-import { DEFAULT_DB_CONNECTION } from '@lib/constants';
+import { DEFAULT_CONNECTION_NAME } from '@lib/constants';
 
 /**
  * Defining types
@@ -16,10 +16,12 @@ import { DEFAULT_DB_CONNECTION } from '@lib/constants';
  */
 
 export function getModelToken(model: string, connectionName?: string) {
-  if (connectionName === undefined) return `${model}Model`;
-  return `${getConnectionToken(connectionName)}/${model}Model`;
+  const connectionToken = getConnectionToken(connectionName);
+  const modelToken = `${model}Model`;
+  return `${connectionToken}/${modelToken}`;
 }
 
 export function getConnectionToken(name?: string) {
-  return name && name !== DEFAULT_DB_CONNECTION ? `${name}Connection` : DEFAULT_DB_CONNECTION;
+  if (!name) name = DEFAULT_CONNECTION_NAME;
+  return `${name}Connection`;
 }

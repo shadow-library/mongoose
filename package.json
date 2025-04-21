@@ -42,5 +42,8 @@
   },
   "peerDependencies": {
     "mongoose": "^8.0.0"
+  },
+  "dependencies": {
+    "@shadow-library/app": "^1.0.6"
   }
 }

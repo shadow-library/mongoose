@@ -1,0 +1,44 @@
+/**
+ * Importing npm packages
+ */
+import { FactoryProvider } from '@shadow-library/app';
+import { ConnectOptions, Connection, MongooseError } from 'mongoose';
+import { Promisable } from 'type-fest';
+
+/**
+ * Importing user defined packages
+ */
+
+/**
+ * Defining types
+ */
+
+export interface MongooseModuleFactoryOptions extends ConnectOptions {
+  /** MongoDB URI connection string */
+  uri: string;
+
+  /** Factory to add details to the connection, called after the connection to MongoDB is established */
+  connectionFactory?: (connection: Connection, name: string) => Connection;
+
+  /** Factory to handle connection errors, called when there is a connection error */
+  connectionErrorFactory?: (error: MongooseError) => MongooseError;
+
+  /** Callback function called when a connection is created */
+  onConnectionCreate?: (connection: Connection) => void;
+}
+
+export interface MongooseModuleOptions extends Omit<MongooseModuleFactoryOptions, 'uri'> {
+  /** Name of the connection, if not provided the default connection name will be used */
+  connectionName?: string;
+}
+
+export interface MongooseModuleAsyncOptions {
+  /** Name of the connection, if not provided the default connection name will be used */
+  connectionName?: string;
+
+  /** Dependency injection for the factory function */
+  inject?: FactoryProvider['inject'];
+
+  /** Factory function to create the options for the module */
+  useFactory?: (...args: any[]) => Promisable<MongooseModuleFactoryOptions>;
+}
