@@ -2,6 +2,7 @@
  * Importing npm packages
  */
 import { describe, expect, it } from 'bun:test';
+
 import { Schema as MongooseSchema } from 'mongoose';
 
 /**
@@ -40,6 +41,10 @@ describe('SchemaFactory', () => {
     @Prop()
     subDocumentTwo: SubDocumentTwo;
   }
+
+  it('should not be able to instantiate the class', () => {
+    expect(() => new SchemaFactory()).toThrowError();
+  });
 
   it('should create a schema for the given class', () => {
     const schema = SchemaFactory.create(SubDocumentTwo);
