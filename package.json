@@ -21,28 +21,32 @@
   },
   "homepage": "https://github.com/shadow-library/mongoose#readme",
   "devDependencies": {
-    "@commitlint/cli": "^19.5.0",
-    "@commitlint/config-conventional": "^19.5.0",
-    "@eslint/js": "^9.13.0",
-    "@release-it/conventional-changelog": "^10.0.0",
-    "@types/bun": "^1.1.13",
-    "@typescript-eslint/parser": "^8.11.0",
-    "eslint": "^9.13.0",
-    "eslint-import-resolver-typescript": "^3.6.3",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@eslint/js": "^9.25.1",
+    "@release-it/conventional-changelog": "^10.0.1",
+    "@types/bun": "^1.2.10",
+    "@typescript-eslint/parser": "^8.31.0",
+    "eslint": "^9.25.1",
+    "eslint-import-resolver-typescript": "^3.10.1",
     "eslint-plugin-import": "^2.31.0",
-    "globals": "^15.11.0",
-    "husky": "^9.1.6",
-    "mongoose": "^8.9.5",
-    "prettier": "^3.3.3",
+    "globals": "^15.15.0",
+    "husky": "^9.1.7",
+    "mongoose": "^8.13.2",
+    "prettier": "^3.5.3",
     "reflect-metadata": "^0.2.2",
-    "release-it": "^17.10.0",
-    "tsc-alias": "^1.8.10",
-    "type-fest": "^4.26.1",
-    "typescript": "^5.6.3",
-    "typescript-eslint": "^8.11.0"
+    "release-it": "^17.11.0",
+    "tsc-alias": "^1.8.15",
+    "type-fest": "^4.40.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.0"
   },
   "peerDependencies": {
     "mongoose": "^8.0.0",
     "reflect-metadata": "^0.2.2"
+  },
+  "dependencies": {
+    "@shadow-library/app": "^1.0.6",
+    "@shadow-library/common": "^1.0.5"
   }
 }

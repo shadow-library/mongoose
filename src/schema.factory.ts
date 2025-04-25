@@ -18,8 +18,11 @@ import { PROP_METADATA_KEY, SCHEMA_FIELDS_METADATA_KEY, SCHEMA_METADATA_KEY } fr
  */
 const BUILT_IN_TYPES: (Class<unknown> | BigIntConstructor)[] = [Boolean, Number, String, Map, Date, Buffer, BigInt];
 
-/* eslint-disable-next-line @typescript-eslint/no-extraneous-class */
 export class SchemaFactory {
+  constructor() {
+    throw new Error(`The ${this.constructor.name} class cannot be instantiated.`);
+  }
+
   private static isPrimitiveType(type: Class<unknown>): boolean {
     return BUILT_IN_TYPES.includes(type);
   }
