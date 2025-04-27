@@ -8,7 +8,7 @@ import { Schema as MongooseSchema } from 'mongoose';
 /**
  * Importing user defined packages
  */
-import { Prop, Schema, SchemaFactory } from '@shadow-library/mongoose';
+import { Alias, Prop, Schema, SchemaFactory } from '@shadow-library/mongoose';
 
 /**
  * Defining types
@@ -40,6 +40,9 @@ describe('SchemaFactory', () => {
 
     @Prop()
     subDocumentTwo: SubDocumentTwo;
+
+    @Alias('subDocumentOne')
+    aliasedSubDocumentOne: SubDocumentOne;
   }
 
   it('should not be able to instantiate the class', () => {
@@ -68,6 +71,7 @@ describe('SchemaFactory', () => {
       },
       subDocumentOne: {
         type: expect.any(MongooseSchema),
+        alias: 'aliasedSubDocumentOne',
       },
       subDocumentTwo: {
         type: {
