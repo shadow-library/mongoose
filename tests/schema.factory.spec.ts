@@ -3,12 +3,13 @@
  */
 import { describe, expect, it } from 'bun:test';
 
-import { Schema as MongooseSchema } from 'mongoose';
+import { withThis } from '@shadow-library/common';
+import { Schema as MongooseSchema, VirtualType } from 'mongoose';
 
 /**
  * Importing user defined packages
  */
-import { Alias, Prop, Schema, SchemaFactory } from '@shadow-library/mongoose';
+import { Alias, Prop, Schema, SchemaFactory, Virtual } from '@shadow-library/mongoose';
 
 /**
  * Defining types
@@ -43,6 +44,21 @@ describe('SchemaFactory', () => {
 
     @Alias('subDocumentOne')
     aliasedSubDocumentOne: SubDocumentOne;
+  }
+
+  @Schema({ toObject: { virtuals: true } })
+  class User {
+    @Prop()
+    firstName: string;
+
+    @Prop()
+    lastName: string;
+
+    @Virtual({
+      get: withThis((obj: User) => `${obj.firstName} ${obj.lastName}`),
+      set: withThis((obj: User, value: string) => ([obj.firstName = '', obj.lastName = ''] = value.split(' '))),
+    })
+    fullName: string;
   }
 
   it('should not be able to instantiate the class', () => {
@@ -81,5 +97,19 @@ describe('SchemaFactory', () => {
         },
       },
     });
+  });
+
+  it('should create a schema for the given class with virtuals', () => {
+    const setObj = {} as any;
+    const getObj = { firstName: 'John', lastName: 'Doe' } as any;
+    const schema = SchemaFactory.create(User);
+
+    const virtual = schema.virtual('fullName');
+    const getResult = virtual.applyGetters({}, getObj);
+    virtual.applySetters('John Doe', setObj);
+
+    expect(virtual).toBeInstanceOf(VirtualType);
+    expect(getResult).toBe('John Doe');
+    expect(setObj).toStrictEqual({ firstName: 'John', lastName: 'Doe' });
   });
 });
