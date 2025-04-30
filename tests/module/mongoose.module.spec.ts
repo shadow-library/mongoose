@@ -56,4 +56,41 @@ describe('MongooseModule', () => {
     const options = moduleMetadata.providers[0].useFactory();
     expect(options).toEqual({ uri: 'mongodb://localhost:27017/test', connectionName: 'TestConnection', appName: 'TestApp' });
   });
+
+  it('should throw an error if the connection is not initialized', () => {
+    expect(() => MongooseModule.forFeature([], 'NonExistentConnection')).toThrowError('MongooseModule is not initialized for connection: NonExistentConnection');
+  });
+
+  it('should create providers for the models', () => {
+    const modelDefinition = [{ name: 'Test', schema: {} }];
+    const modelModule = MongooseModule.forFeature(modelDefinition as any, 'TestConnection');
+    const modelKey = Reflect.getMetadataKeys(modelModule).find(key => key.toString() === 'Symbol(module-metadata)');
+    const modelModuleMetadata = Reflect.getMetadata(modelKey, modelModule);
+    expect(modelModuleMetadata).toStrictEqual({
+      imports: [expect.anything()],
+      providers: [{ token: 'TestConnectionConnection/TestModel', useFactory: expect.any(Function), inject: ['TestConnectionConnection'] }],
+      exports: ['TestConnectionConnection/TestModel'],
+    });
+  });
+
+  it('should create providers for the discriminators', () => {
+    const modelDefinition = [
+      {
+        name: 'Base',
+        schema: {},
+        discriminators: [{ name: 'BaseOne', schema: {}, value: 'test' }],
+      },
+    ];
+    const modelModule = MongooseModule.forFeature(modelDefinition as any, 'TestConnection');
+    const modelKey = Reflect.getMetadataKeys(modelModule).find(key => key.toString() === 'Symbol(module-metadata)');
+    const modelModuleMetadata = Reflect.getMetadata(modelKey, modelModule);
+    expect(modelModuleMetadata).toStrictEqual({
+      imports: [expect.anything()],
+      providers: [
+        { token: 'TestConnectionConnection/BaseModel', useFactory: expect.any(Function), inject: ['TestConnectionConnection'] },
+        { token: 'TestConnectionConnection/BaseOneModel', useFactory: expect.any(Function), inject: ['TestConnectionConnection/BaseModel'] },
+      ],
+      exports: ['TestConnectionConnection/BaseModel', 'TestConnectionConnection/BaseOneModel'],
+    });
+  });
 });
