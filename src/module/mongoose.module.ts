@@ -1,7 +1,7 @@
 /**
  * Importing npm packages
  */
-import { FactoryProvider, Module } from '@shadow-library/app';
+import { FactoryProvider, Module, forwardRef } from '@shadow-library/app';
 import { InternalError } from '@shadow-library/common';
 import { Connection, Document, Model } from 'mongoose';
 import { Class } from 'type-fest';
@@ -24,6 +24,13 @@ import { createConnection, getConnectionToken, getModelToken } from './mongoose.
 
 export class MongooseModule {
   private static readonly modules = new Map<string, Class<MongooseModule>>();
+
+  private static getMongooseModule(connectionName?: string): Class<MongooseModule> {
+    const connectionToken = getConnectionToken(connectionName);
+    const mongooseModule = this.modules.get(connectionToken);
+    if (!mongooseModule) throw new InternalError(`MongooseModule is not initialized for connection: ${connectionName}`);
+    return mongooseModule;
+  }
 
   static forRoot(uri: string, options: MongooseModuleOptions = {}): Class<MongooseModule> {
     return this.forRootAsync({ connectionName: options.connectionName, useFactory: () => ({ uri, ...options }) });
@@ -50,8 +57,7 @@ export class MongooseModule {
 
   static forFeature(models: ModelDefinition[], connectionName?: string): Class<MongooseModule> {
     const connectionToken = getConnectionToken(connectionName);
-    const mongooseModule = this.modules.get(connectionToken);
-    if (!mongooseModule) throw new InternalError(`MongooseModule is not initialized for connection: ${connectionName}`);
+    const mongooseModule = forwardRef(() => this.getMongooseModule(connectionName));
     const providers: FactoryProvider[] = [];
 
     for (const model of models) {

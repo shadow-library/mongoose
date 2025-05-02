@@ -58,7 +58,11 @@ describe('MongooseModule', () => {
   });
 
   it('should throw an error if the connection is not initialized', () => {
-    expect(() => MongooseModule.forFeature([], 'NonExistentConnection')).toThrowError('MongooseModule is not initialized for connection: NonExistentConnection');
+    const Module = MongooseModule.forFeature([], 'NonExistentConnection');
+    const key = Reflect.getMetadataKeys(Module).find(key => key.toString() === 'Symbol(module-metadata)');
+    const moduleMetadata = Reflect.getMetadata(key, Module);
+    const forwardRef = moduleMetadata.imports[0].forwardRef;
+    expect(() => forwardRef()).toThrowError('MongooseModule is not initialized for connection: NonExistentConnection');
   });
 
   it('should create providers for the models', () => {
