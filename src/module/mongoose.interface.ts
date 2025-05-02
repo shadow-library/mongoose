@@ -2,7 +2,7 @@
  * Importing npm packages
  */
 import { FactoryProvider } from '@shadow-library/app';
-import { ConnectOptions, Connection, MongooseError } from 'mongoose';
+import { ConnectOptions, Connection, MongooseError, Schema } from 'mongoose';
 import { Promisable } from 'type-fest';
 
 /**
@@ -41,4 +41,29 @@ export interface MongooseModuleAsyncOptions {
 
   /** Factory function to create the options for the module */
   useFactory: (...args: any[]) => Promisable<MongooseModuleFactoryOptions>;
+}
+
+export interface DiscriminatorOptions {
+  /** Name of the discriminator */
+  name: string;
+
+  /** Schema for the discriminator */
+  schema: Schema;
+
+  /** The string stored in the discriminatorKey property */
+  value?: string;
+}
+
+export interface ModelDefinition {
+  /** Name of the model */
+  name: string;
+
+  /** Mongoose schema for the model */
+  schema: Schema;
+
+  /** Mongoose connection for the model */
+  collection?: string;
+
+  /** Discriminator options for the model */
+  discriminators?: DiscriminatorOptions[];
 }
