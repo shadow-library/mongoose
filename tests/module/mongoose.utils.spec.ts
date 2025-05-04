@@ -51,14 +51,14 @@ describe('Mongoose Utils', () => {
     });
 
     it('should create a connection with the given options', async () => {
-      mongoose.createConnection = jest.fn(() => ({ asPromise: jest.fn(() => Promise.resolve({})) })) as any;
+      mongoose.createConnection = jest.fn(() => ({ asPromise: jest.fn(() => Promise.resolve({})), on: jest.fn() })) as any;
       const connection = await createConnection('TestConnection', { uri: 'mongodb://localhost:27017/test' });
       expect(connection.asPromise).toHaveBeenCalled();
       expect(mongoose.createConnection).toHaveBeenCalledWith('mongodb://localhost:27017/test', {});
     });
 
     it('should call the connection factory if provided', async () => {
-      mongoose.createConnection = jest.fn(() => ({ asPromise: jest.fn(() => Promise.resolve({})) })) as any;
+      mongoose.createConnection = jest.fn(() => ({ asPromise: jest.fn(() => Promise.resolve({})), on: jest.fn() })) as any;
       const connectionFactory = jest.fn(connection => connection);
       const onConnectionCreate = jest.fn();
       await createConnection('TestConnection', { uri: 'mongodb://localhost:27017/test', connectionFactory, onConnectionCreate });
@@ -68,13 +68,13 @@ describe('Mongoose Utils', () => {
 
     it('should throw an error if the connection fails', async () => {
       const error = new Error('Connection failed');
-      mongoose.createConnection = jest.fn(() => ({ asPromise: jest.fn(() => Promise.reject(error)) })) as any;
+      mongoose.createConnection = jest.fn(() => ({ asPromise: jest.fn(() => Promise.reject(error)), on: jest.fn() })) as any;
       await expect(createConnection('TestConnection', { uri: 'mongodb://localhost:27017/test' })).rejects.toThrow(error);
     });
 
     it('should throw an error if the connection fails after calling on error callback', async () => {
       const error = new Error('Connection failed');
-      mongoose.createConnection = jest.fn(() => ({ asPromise: jest.fn(() => Promise.reject(error)) })) as any;
+      mongoose.createConnection = jest.fn(() => ({ asPromise: jest.fn(() => Promise.reject(error)), on: jest.fn() })) as any;
       const connectionErrorFactory = jest.fn(() => throwError(error));
       await expect(createConnection('TestConnection', { uri: 'mongodb://localhost:27017/test', connectionErrorFactory })).rejects.toThrow(error);
       expect(connectionErrorFactory).toHaveBeenCalled();
