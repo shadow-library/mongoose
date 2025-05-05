@@ -1,8 +1,8 @@
 /**
  * Importing npm packages
  */
-import { Task, tryCatch, utils } from '@shadow-library/common';
-import mongoose, { Connection } from 'mongoose';
+import { Logger, Task, tryCatch, utils, withThis } from '@shadow-library/common';
+import mongoose, { Collection, Connection } from 'mongoose';
 
 /**
  * Importing user defined packages
@@ -18,6 +18,7 @@ import { MongooseModuleFactoryOptions } from './mongoose.interface';
 /**
  * Declaring the constants
  */
+export const logger = Logger.getLogger('Mongoose');
 
 export function getModelToken(model: string, connectionName?: string): string {
   const connectionToken = getConnectionToken(connectionName);
@@ -40,8 +41,22 @@ export async function createConnection(connectionName: string, opts: MongooseMod
   const connection = mongoose.createConnection(opts.uri, mongooseOptions);
   onConnectionCreate(connection);
 
+  /** Handling mongoose connection events */
+  const connectionCloseHandler = withThis((conn: Connection) => logger.info(`mongodb connection to database '${conn.db?.databaseName}' closed`));
+  const connectionErrorHandler = withThis((conn: Connection) => logger.error(`mongodb connection to database '${conn.db?.databaseName}' error`));
+  const connectionDisconnectedHandler = withThis((conn: Connection) => logger.warn(`mongodb connection to database '${conn.db?.databaseName}' disconnected`));
+  connection.on('close', connectionCloseHandler);
+  connection.on('error', connectionErrorHandler);
+  connection.on('connected', connectionDisconnectedHandler);
+
   const task = Task.create(() => connection.asPromise()).name('MongooseConnection');
   const result = await tryCatch(() => task.execute());
   if (!result.success) throw connectionErrorFactory(result.error);
   return connectionFactory(connection, connectionName);
+}
+
+export function mongooseDebugLogger(this: Collection, collectionName: string, methodName: string, ...methodArgs: any[]): void {
+  const args: string[] = [];
+  for (const value of methodArgs) args.push(this.$format(value));
+  logger.debug(`(${this.dbName}) db.${collectionName}.${methodName}(${args.join(', ')})`);
 }

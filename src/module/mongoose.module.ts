@@ -1,9 +1,9 @@
 /**
  * Importing npm packages
  */
-import { FactoryProvider, Module, forwardRef } from '@shadow-library/app';
-import { InternalError } from '@shadow-library/common';
-import { Connection, Document, Model } from 'mongoose';
+import { FactoryProvider, Module, OnModuleInit, forwardRef } from '@shadow-library/app';
+import { Config, InternalError } from '@shadow-library/common';
+import mongoose, { Connection, Document, Model } from 'mongoose';
 import { Class } from 'type-fest';
 
 /**
@@ -12,7 +12,7 @@ import { Class } from 'type-fest';
 import { MONGOOSE_MODULE_OPTIONS } from '@lib/constants';
 
 import { ModelDefinition, MongooseModuleAsyncOptions, MongooseModuleFactoryOptions, MongooseModuleOptions } from './mongoose.interface';
-import { createConnection, getConnectionToken, getModelToken } from './mongoose.utils';
+import { createConnection, getConnectionToken, getModelToken, mongooseDebugLogger } from './mongoose.utils';
 
 /**
  * Defining types
@@ -22,7 +22,7 @@ import { createConnection, getConnectionToken, getModelToken } from './mongoose.
  * Declaring the constants
  */
 
-export class MongooseModule {
+export class MongooseModule implements OnModuleInit {
   private static readonly modules = new Map<string, Class<MongooseModule>>();
 
   private static getMongooseModule(connectionName?: string): Class<MongooseModule> {
@@ -74,5 +74,14 @@ export class MongooseModule {
     const Class = class extends MongooseModule {};
     Module({ imports: [mongooseModule], providers, exports: providers.map(provider => provider.token) })(Class);
     return Class;
+  }
+
+  onModuleInit(): void {
+    mongoose.set('runValidators', true);
+    mongoose.set('returnOriginal', false);
+    mongoose.set('translateAliases', true);
+    mongoose.set('toObject', { virtuals: true });
+    mongoose.set('toJSON', { virtuals: true });
+    if (Config.get('log.level') === 'debug') mongoose.set('debug', mongooseDebugLogger);
   }
 }
