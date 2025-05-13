@@ -47,6 +47,6 @@
   },
   "dependencies": {
     "@shadow-library/app": "^1.0.6",
-    "@shadow-library/common": "^1.0.7"
+    "@shadow-library/common": "^1.0.10"
   }
 }
