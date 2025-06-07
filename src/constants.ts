@@ -13,6 +13,8 @@
 /**
  * Declaring the constants
  */
+export const NAMESPACE = '@shadow-library/mongoose';
+
 export const DESIGN_TYPE_METADATA_KEY = 'design:type';
 
 export const PROP_METADATA_KEY = Symbol('mongoose:prop');

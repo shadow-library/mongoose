@@ -7,7 +7,7 @@ import mongoose, { Collection, Connection } from 'mongoose';
 /**
  * Importing user defined packages
  */
-import { DEFAULT_CONNECTION_NAME } from '@lib/constants';
+import { DEFAULT_CONNECTION_NAME, NAMESPACE } from '@lib/constants';
 
 import { MongooseModuleFactoryOptions } from './mongoose.interface';
 
@@ -18,7 +18,7 @@ import { MongooseModuleFactoryOptions } from './mongoose.interface';
 /**
  * Declaring the constants
  */
-export const logger = Logger.getLogger('Mongoose');
+export const logger = Logger.getLogger(NAMESPACE, 'Mongoose');
 
 export function getModelToken(model: string, connectionName?: string): string {
   const connectionToken = getConnectionToken(connectionName);
