@@ -1,7 +1,7 @@
 {
   "name": "@shadow-library/mongoose",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A modular Mongoose integration for the Shadow framework, enabling schema definitions, connections, and model injection using decorators.",
   "scripts": {
     "prepare": "husky",
