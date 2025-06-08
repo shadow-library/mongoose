@@ -1,9 +1,4 @@
 /**
- * Importing npm packages
- */
-import 'reflect-metadata';
-
-/**
  * exporting modules
  */
 export * from './classes';
