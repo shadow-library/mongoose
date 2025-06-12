@@ -44,10 +44,12 @@ export async function createConnection(connectionName: string, opts: MongooseMod
   /** Handling mongoose connection events */
   const connectionCloseHandler = withThis((conn: Connection) => logger.info(`mongodb connection to database '${conn.db?.databaseName}' closed`));
   const connectionErrorHandler = withThis((conn: Connection) => logger.error(`mongodb connection to database '${conn.db?.databaseName}' error`));
+  const connectionConnectedHandler = withThis((conn: Connection) => logger.warn(`mongodb connection to database '${conn.db?.databaseName}' connected`));
   const connectionDisconnectedHandler = withThis((conn: Connection) => logger.warn(`mongodb connection to database '${conn.db?.databaseName}' disconnected`));
   connection.on('close', connectionCloseHandler);
   connection.on('error', connectionErrorHandler);
-  connection.on('connected', connectionDisconnectedHandler);
+  connection.on('connected', connectionConnectedHandler);
+  connection.on('disconnected', connectionDisconnectedHandler);
 
   const task = Task.create(() => connection.asPromise()).name('MongooseConnection');
   const result = await tryCatch(() => task.execute());
