@@ -9,7 +9,7 @@ import { Types } from 'mongoose';
 /**
  * Importing user defined packages
  */
-import { assertObjectID, attachParent } from '@shadow-library/mongoose';
+import { assertObjectID, attachMatchingParent, attachParent } from '@shadow-library/mongoose';
 
 /**
  * Defining types
@@ -71,6 +71,41 @@ describe('Utils', () => {
 
       expect(() => (linked.getParent = () => ({ baz: 10 }))).toThrow();
       expect(linked.getParent()).toBe(parent);
+    });
+  });
+
+  describe('attachMatchingParent', () => {
+    const parents = [
+      { id: 1, name: 'Parent1' },
+      { id: 2, name: 'Parent2' },
+    ];
+
+    const sources = [
+      { id: 1, sourceId: 3, value: 'Child1' },
+      { id: 2, sourceId: 1, value: 'Child2' },
+      { id: 3, sourceId: 2, value: 'Child3' },
+    ];
+
+    it('should attach parent using same key in source and parent', () => {
+      const result = attachMatchingParent(sources, 'id', parents);
+      expect(result?.[0]?.getParent()).toBe(parents[0]);
+      expect(result?.[1]?.getParent()).toBe(parents[1]);
+      expect(result?.[2]?.getParent()).toBeNull();
+    });
+
+    it('should attach parent using different key for source and parent', () => {
+      const result = attachMatchingParent(sources, 'sourceId', parents, 'id');
+      expect(result?.[0]?.getParent()).toBeNull();
+      expect(result?.[1]?.getParent()).toBe(parents[0]);
+      expect(result?.[2]?.getParent()).toEqual(parents[1]);
+    });
+
+    it('should throw if parent not found and throwErrorIfNotFound is true', () => {
+      expect(() => attachMatchingParent(sources, 'id', parents, 'id', true)).toThrow(InternalError);
+    });
+
+    it('should throw if parent not found and throwErrorIfNotFound is true (parentKey omitted)', () => {
+      expect(() => attachMatchingParent(sources, 'id', parents, true)).toThrow(InternalError);
     });
   });
 });
