@@ -11,7 +11,7 @@ import { Class } from 'type-fest';
  */
 import { MONGOOSE_MODULE_OPTIONS } from '@lib/constants';
 
-import { ModelDefinition, MongooseModuleAsyncOptions, MongooseModuleFactoryOptions, MongooseModuleOptions } from './mongoose.interface';
+import { ModelDefinition, MongooseFeatureOptions, MongooseModuleAsyncOptions, MongooseModuleFactoryOptions, MongooseModuleOptions } from './mongoose.interface';
 import { createConnection, getConnectionToken, getModelToken, mongooseDebugLogger } from './mongoose.utils';
 
 /**
@@ -49,32 +49,34 @@ export class MongooseModule implements OnModuleInit {
       inject: [MONGOOSE_MODULE_OPTIONS],
     };
 
-    const Class = class extends MongooseModule {};
-    Module({ providers: [connectionOptionsProvider, connectionProvider] })(Class);
-    this.modules.set(connectionToken, Class);
-    return Class;
+    const MongooseConnectionModule = class extends MongooseModule {};
+    Object.defineProperty(MongooseConnectionModule, 'name', { value: `Mongoose${connectionToken}Module` });
+    Module({ providers: [connectionOptionsProvider, connectionProvider] })(MongooseConnectionModule);
+    this.modules.set(connectionToken, MongooseConnectionModule);
+    return MongooseConnectionModule;
   }
 
-  static forFeature(models: ModelDefinition[], connectionName?: string): Class<MongooseModule> {
-    const connectionToken = getConnectionToken(connectionName);
-    const mongooseModule = forwardRef(() => this.getMongooseModule(connectionName));
+  static forFeature(models: ModelDefinition[], options?: MongooseFeatureOptions): Class<MongooseModule> {
+    const connectionToken = getConnectionToken(options?.connectionName);
+    const mongooseModule = forwardRef(() => this.getMongooseModule(options?.connectionName));
     const providers: FactoryProvider[] = [];
 
     for (const model of models) {
-      const baseModelToken = getModelToken(model.name, connectionName);
+      const baseModelToken = getModelToken(model.name, options?.connectionName);
       const baseFactory = (connection: Connection) => connection.models[model.name] ?? connection.model(model.name, model.schema, model.name);
       providers.push({ token: baseModelToken, useFactory: baseFactory, inject: [connectionToken] });
       for (const discriminator of model.discriminators ?? []) {
-        const discriminatorModelToken = getModelToken(discriminator.name, connectionName);
+        const discriminatorModelToken = getModelToken(discriminator.name, options?.connectionName);
         const discriminatorFactory = (model: Model<Document>) => model.discriminator(discriminator.name, discriminator.schema, discriminator.value);
         providers.push({ token: discriminatorModelToken, useFactory: discriminatorFactory, inject: [baseModelToken] });
       }
     }
 
-    const MongooseConnectionModule = class extends MongooseModule {};
-    Object.defineProperty(MongooseConnectionModule, 'name', { value: `Mongoose${connectionToken}Module` });
-    Module({ imports: [mongooseModule], providers, exports: providers.map(provider => provider.token) })(MongooseConnectionModule);
-    return MongooseConnectionModule;
+    const featureToken = options?.featureName || `${models[0]?.name ?? 'Undefined'}Model`;
+    const MongooseFeatureModule = class extends MongooseModule {};
+    Object.defineProperty(MongooseFeatureModule, 'name', { value: `Mongoose${featureToken}Module` });
+    Module({ imports: [mongooseModule], providers, exports: providers.map(provider => provider.token) })(MongooseFeatureModule);
+    return MongooseFeatureModule;
   }
 
   onModuleInit(): void {

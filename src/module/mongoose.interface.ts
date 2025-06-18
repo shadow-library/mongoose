@@ -67,3 +67,11 @@ export interface ModelDefinition {
   /** Discriminator options for the model */
   discriminators?: DiscriminatorOptions[];
 }
+
+export interface MongooseFeatureOptions {
+  /** Name of the connection, if not provided the default connection name will be used */
+  connectionName?: string;
+
+  /** Name of the feature, if not provided the first model name will be used */
+  featureName?: string;
+}
