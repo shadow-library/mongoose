@@ -71,9 +71,10 @@ export class MongooseModule implements OnModuleInit {
       }
     }
 
-    const Class = class extends MongooseModule {};
-    Module({ imports: [mongooseModule], providers, exports: providers.map(provider => provider.token) })(Class);
-    return Class;
+    const MongooseConnectionModule = class extends MongooseModule {};
+    Object.defineProperty(MongooseConnectionModule, 'name', { value: `Mongoose${connectionToken}Module` });
+    Module({ imports: [mongooseModule], providers, exports: providers.map(provider => provider.token) })(MongooseConnectionModule);
+    return MongooseConnectionModule;
   }
 
   onModuleInit(): void {
